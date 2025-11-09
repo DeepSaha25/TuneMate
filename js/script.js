@@ -23,8 +23,12 @@ const folderSongs = {
     "O mere Dil ke": ["O mere dil ke chain.mp3"],
     "Lag ja Gale": ["lag ja gale.mp3"],
     "karan aujla": [
-        "For A Reason (Official Video) Karan Aujla  Tania   Ikky  Latest Punjabi Songs 2025 - Rehaan Records.mp3",
-        "Wavy Karan Aujla.mp3"
+        "Admirin You - Karan Aujla.mp3",
+        "For A Reason.mp3",
+        "Mexico (Original) - Karan Aujla.mp3",
+        "Tell Me - Karan Aujla.mp3",
+        "Wavy Karan Aujla.mp3",
+        "Winning Speech - Karan Aujla.mp3"
     ],
     "Señorita - Shawn Mendes": ["Señorita - Shawn Mendes.mp3"],
     "Main Rang Sharbaton ka": ["Main Rang Sharbaton ka.mp3"],
