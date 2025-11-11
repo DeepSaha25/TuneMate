@@ -163,7 +163,19 @@ body {
   color: #b3b3b3;
   font-size: 12px;
 }
-
+.songList ul li.active-song {
+  background-color: #2a2a2a;
+  border-color: #1ed760;
+} 
+.songList ul li.active-song .info div:first-child {
+  color: #1ed760; 
+}
+.songList ul li.active-song .playnow span {
+  visibility: hidden;
+}
+.songList ul li.active-song img.invert {
+   filter: invert(48%) sepia(80%) saturate(1207%) hue-rotate(97deg) brightness(94%) contrast(87%);
+}
 .playnow {
   display: flex;
   justify-content: center;
