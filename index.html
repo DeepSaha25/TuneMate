@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TuneMate</title>
+  <link rel="manifest" href="manifest.json">
+
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/utility.css">
@@ -107,5 +109,11 @@
   </div>
 
   <script src="js/script.js"></script>
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/TuneMate/service-worker.js");
+  }
+</script>
+
 </body>
 </html>

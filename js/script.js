@@ -56,7 +56,6 @@ const folderSongs = {
     "Naina": ["Naina.mp3"],
     "Coldplay X BTS - My Universe": ["Coldplay X BTS - My Universe.mp3"],
     "Even When_The Best Part": ["Olivia Rodrigo, Joshua Bassett - Even When_The Best Part.mp3"],
-    // --- New Albums Added ---
     "Dil Tu Jaan Tu": ["Dil Tu Jaan Tu.mp3"],
     "Varoon": ["Vaaroon - Mirzapur.mp3"]
 };
@@ -75,14 +74,13 @@ async function getSongs(folder) {
     
     // --- MODIFIED: To handle "Liked Songs" virtual folder ---
     if (folder === 'Liked Songs') {
-        songs = likedSongs.map(fullPath => fullPath.split('/').pop()); // Get just filenames
-        currFolder = 'Liked Songs'; // Set special folder flag
+        songs = likedSongs.map(fullPath => fullPath.split('/').pop()); 
+        currFolder = 'Liked Songs';
     } else {
         currFolder = folder;
         let folderName = folder.split("/").pop(); 
         songs = folderSongs[folderName] || [];
     }
-    // --------------------------------------------------------
 
     if (songs.length === 0 && folder === 'Liked Songs') {
         songUL.innerHTML = `<li style="cursor: default; background: none; border: none;">No liked songs yet.</li>`;
@@ -103,7 +101,6 @@ async function getSongs(folder) {
 
     Array.from(document.querySelectorAll(".songList li")).forEach(e => {
         if (e.style.cursor === 'default') return; 
-        
         e.addEventListener("click", () => {
             let trackName = e.querySelector(".info").firstElementChild.innerHTML.trim() + ".mp3";
             playMusic(trackName);
@@ -116,6 +113,7 @@ async function getSongs(folder) {
 }
 
 const playMusic = (track, pause = false) => {
+
     if (!track) {
         document.querySelector(".songinfo").innerHTML = "Error: No track selected";
         document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
@@ -134,15 +132,11 @@ const playMusic = (track, pause = false) => {
         });
     }
     
-    // --- MODIFIED: To find the full path for liked songs ---
     if (currFolder === 'Liked Songs') {
         let fullPath = likedSongs.find(path => path.endsWith('/' + track));
         if (fullPath) {
             currentSong.src = fullPath;
-        } else {
-            console.error("Could not find liked song full path:", track);
-            return;
-        }
+        } 
     } else {
         currentSong.src = `${currFolder}/${track}`;
         highlightCurrentSong(track);
@@ -155,6 +149,7 @@ const playMusic = (track, pause = false) => {
     document.querySelector(".songinfo").innerHTML = decodeURI(track.replace(".mp3", ""));
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
 };
+
 
 // --- NEW: Function to handle liking/unliking an album ---
 function toggleLikeAlbum(likeButton) {
@@ -179,10 +174,10 @@ function toggleLikeAlbum(likeButton) {
     if (currFolder === 'Liked Songs') getSongs('Liked Songs');
 }
 
+
 async function displayAlbums() {
     let cardContainer = document.querySelector(".cardContainer");
-    
-    // --- MODIFIED: Added new folders ---
+
     let folders = [
         "Kiliye Kiliye", 
         "O mere Dil ke", 
@@ -203,7 +198,6 @@ async function displayAlbums() {
         "Dil Tu Jaan Tu",
         "Varoon"
     ];
-    // ----------------------------------
 
     for (const folder of folders) { 
         try {
@@ -263,6 +257,7 @@ async function displayAlbums() {
     });
 }
 
+
 async function main() {
     setDynamicGreeting();
     await getSongs("songs/Kiliye Kiliye");
@@ -296,11 +291,14 @@ async function main() {
             (currentSong.currentTime / currentSong.duration) * 100 + "%";
     });
 
-    // --- NEW FEATURE: Auto-play next song or next album ---
+    // --- NEW FIXED FEATURE: Auto-play next song or next album ---
     currentSong.addEventListener("ended", async () => {
+
         if (!songs || songs.length === 0) return;
 
-        let currentTrackName = decodeURI(currentSong.src.split("/").pop());
+        // FIX APPLIED HERE
+        let currentTrackName = decodeURI(currentSong.src.split("/").pop().split("?")[0]);
+
         let index = songs.indexOf(currentTrackName);
 
         if (index !== -1 && index + 1 < songs.length) {
@@ -308,7 +306,6 @@ async function main() {
             return;
         }
 
-        // --- MODIFIED: Added new folders to auto-play order ---
         const folderOrder = [
             "Kiliye Kiliye", 
             "O mere Dil ke", 
@@ -329,7 +326,6 @@ async function main() {
             "Dil Tu Jaan Tu",
             "Varoon"
         ];
-        // -----------------------------------------------------
 
         const currentAlbum = currFolder?.split("/").pop();
         const currentAlbumIndex = folderOrder.indexOf(currentAlbum);
@@ -366,7 +362,10 @@ async function main() {
     previous.addEventListener("click", () => {
         if (!currentSong.src || !songs || songs.length === 0) return;
         currentSong.pause();
-        let currentTrackName = decodeURI(currentSong.src.split("/").pop());
+
+        // FIX APPLIED HERE
+        let currentTrackName = decodeURI(currentSong.src.split("/").pop().split("?")[0]);
+
         let index = songs.indexOf(currentTrackName);
         if (index === -1) playMusic(songs[0]);
         else if (index - 1 < 0) playMusic(songs[songs.length - 1]);
@@ -376,7 +375,10 @@ async function main() {
     next.addEventListener("click", () => {
         if (!currentSong.src || !songs || songs.length === 0) return;
         currentSong.pause();
-        let currentTrackName = decodeURI(currentSong.src.split("/").pop());
+
+        // FIX APPLIED HERE
+        let currentTrackName = decodeURI(currentSong.src.split("/").pop().split("?")[0]);
+
         let index = songs.indexOf(currentTrackName);
         if (index === -1) playMusic(songs[0]);
         else if (index + 1 >= songs.length) playMusic(songs[0]);
@@ -403,7 +405,6 @@ async function main() {
         }
     });
 
-    // This search will only work if you add an <input> element with id="searchInput" to your HTML file.
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
