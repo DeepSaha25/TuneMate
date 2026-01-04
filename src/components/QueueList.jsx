@@ -36,7 +36,14 @@ const QueueList = ({ queue, currentIndex, onPlay, onRemove }) => {
                         </div>
                         {onRemove && (
                             <button
-                                onClick={(e) => { e.stopPropagation(); onRemove(song.id); }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Calculate absolute index in the main queue
+                                    // UpNext starts at currentIndex + 1
+                                    // mapped item is at index i of UpNext
+                                    // so absolute index = currentIndex + 1 + i
+                                    onRemove(currentIndex + 1 + i);
+                                }}
                                 className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 p-2 transition"
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>

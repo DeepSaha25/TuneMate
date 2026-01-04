@@ -29,8 +29,21 @@ const TrashIcon = ({ onClick }) => (
 );
 
 // Sub-components
-const AddToPlaylistMenu = ({ playlists, onAdd, onClose }) => (
+const AddToPlaylistMenu = ({ playlists, onAdd, onAddToQueue, onClose }) => (
     <div className="absolute right-0 bottom-full mb-2 bg-[#282828] p-2 rounded shadow-xl min-w-[160px] z-50 flex flex-col gap-1 max-h-48 overflow-y-auto border border-white/10">
+
+        {onAddToQueue && (
+            <div
+                className="px-2 py-2 hover:bg-white/10 cursor-pointer text-sm rounded bg-[#333] mb-1 truncate transition font-medium text-purple-200"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToQueue();
+                    if (onClose) onClose();
+                }}
+            >
+                Add to Queue
+            </div>
+        )}
 
         <div className="text-xs text-gray-400 px-2 pb-1 border-b border-white/10 mb-1 font-bold uppercase tracking-wider">Add to Playlist</div>
         {playlists.length > 0 ? playlists.map(pl => (
@@ -59,7 +72,7 @@ const formatTime = (seconds) => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 };
 
-const SongRow = ({ song, index, isCurrent, onPlay, isLiked, toggleLike, onRemove, playlists, addToPlaylist, onDownload, isDownloaded }) => {
+const SongRow = ({ song, index, isCurrent, onPlay, isLiked, toggleLike, onRemove, playlists, addToPlaylist, addToQueue, onDownload, isDownloaded }) => {
     const [showMenu, setShowMenu] = useState(false);
 
     // Add Start Radio support
@@ -112,6 +125,7 @@ const SongRow = ({ song, index, isCurrent, onPlay, isLiked, toggleLike, onRemove
                             <AddToPlaylistMenu
                                 playlists={playlists}
                                 onAdd={(id) => { addToPlaylist(id, song); alert("Added to Playlist!"); }}
+                                onAddToQueue={() => { addToQueue(song); }}
                                 onClose={() => setShowMenu(false)}
                             />
                         )}
@@ -123,7 +137,7 @@ const SongRow = ({ song, index, isCurrent, onPlay, isLiked, toggleLike, onRemove
     );
 };
 
-const SongCard = ({ song, onPlay, isLiked, toggleLike, addToPlaylist, playlists, onDownload }) => {
+const SongCard = ({ song, onPlay, isLiked, toggleLike, addToPlaylist, addToQueue, playlists, onDownload }) => {
     const [showMenu, setShowMenu] = useState(false);
     return (
         <div
@@ -165,6 +179,7 @@ const SongCard = ({ song, onPlay, isLiked, toggleLike, addToPlaylist, playlists,
                         <AddToPlaylistMenu
                             playlists={playlists}
                             onAdd={(id) => { addToPlaylist(id, song); alert("Added to Playlist!"); }}
+                            onAddToQueue={() => { addToQueue(song); }}
                             onClose={() => setShowMenu(false)}
                         />
                     )}
@@ -189,6 +204,7 @@ const MainContent = ({
     onPlay,
     toggleLike,
     addToPlaylist,
+    addToQueue,
     deletePlaylist,
     currentSong,
     onNavigate,
@@ -310,6 +326,7 @@ const MainContent = ({
                                     playlists={playlists}
                                     onPlay={onPlay}
                                     onDownload={onDownload}
+                                    addToQueue={addToQueue}
                                 />
                             ))}
                         </div>
@@ -387,6 +404,7 @@ const MainContent = ({
                                         addToPlaylist={addToPlaylist}
                                         onDownload={onDownload}
                                         isDownloaded={downloads.some(d => d.id === song.id)}
+                                        addToQueue={addToQueue}
                                     />
                                 ))
                             )}
@@ -436,6 +454,7 @@ const MainContent = ({
                                         playlists={playlists}
                                         addToPlaylist={addToPlaylist}
                                         isDownloaded={true}
+                                        addToQueue={addToQueue}
                                     />
                                 ))
                             ) : (
@@ -507,6 +526,7 @@ const MainContent = ({
                                     addToPlaylist={addToPlaylist}
                                     onDownload={onDownload}
                                     isDownloaded={downloads.some(d => d.id === song.id)}
+                                    addToQueue={addToQueue}
                                 />
                             ))}
                             {songs.length === 0 && <p className="text-gray-500 italic mt-12 text-center text-lg">It's a bit empty here...</p>}
@@ -546,6 +566,7 @@ const MainContent = ({
                                     playlists={playlists}
                                     onPlay={onPlay}
                                     onDownload={onDownload}
+                                    addToQueue={addToQueue}
                                 />
                             )) : (
                                 // Loading Skeletons
@@ -562,7 +583,7 @@ const MainContent = ({
                     <>
                         <section className="animate-slide-up" style={{ animationDelay: '100ms' }}>
                             <h2 className="text-2xl font-bold mb-6 text-white/90">Recently Played</h2>
-                            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6">
+                            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide md:scrollbar-default -mx-6 px-6">
                                 {recentlyPlayed.slice(0, 10).map((song, i) => (
                                     <SongCard
                                         key={i}
@@ -573,6 +594,7 @@ const MainContent = ({
                                         playlists={playlists}
                                         onPlay={onPlay}
                                         onDownload={onDownload}
+                                        addToQueue={addToQueue}
                                     />
                                 ))}
                             </div>
@@ -589,7 +611,7 @@ const MainContent = ({
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                                 </button>
                             </div>
-                            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6">
+                            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide md:scrollbar-default -mx-6 px-6">
                                 {trendingSongs.length > 0 ? trendingSongs.map((song, i) => (
                                     <SongCard
                                         key={song.id || i}
@@ -600,6 +622,7 @@ const MainContent = ({
                                         playlists={playlists}
                                         onPlay={onPlay}
                                         onDownload={onDownload}
+                                        addToQueue={addToQueue}
                                     />
                                 )) : (
                                     Array(5).fill(0).map((_, i) => (

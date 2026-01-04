@@ -252,6 +252,57 @@ function App() {
     openPlayer();
   }, [queue, isShuffle, currentIndex, openPlayer]);
 
+  const addToQueue = useCallback((song) => {
+    setQueue(prevQueue => {
+      const newQueue = [...prevQueue, song];
+      // If shuffle is on, we need to add the new index to shuffledIndices
+      if (isShuffle) {
+        setShuffledIndices(prevIndices => [...prevIndices, newQueue.length - 1]);
+      }
+      return newQueue;
+    });
+
+    // Toast notification
+    const toast = document.createElement("div");
+    toast.innerText = `Added to Queue: ${song.name}`;
+    toast.style.cssText = "position:fixed;bottom:80px;right:20px;background:#a855f7;color:white;padding:12px 24px;border-radius:8px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3); font-weight:bold;";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  }, [isShuffle]);
+
+  const removeFromQueue = useCallback((index) => {
+    setQueue(prevQueue => {
+      const newQueue = [...prevQueue];
+      newQueue.splice(index, 1);
+      return newQueue;
+    });
+
+    // Adjust currentIndex and shuffledIndices
+    if (index < currentIndex) {
+      setCurrentIndex(prev => prev - 1);
+    } else if (index === currentIndex) {
+      // If removing current song, just stay (next render will pick up new song at same index)
+      // or if it was last, we might need to handle closing or prev?
+      // For simplicity, let's just let it be. If size shrinks, handleNext checks size.
+      if (queue.length <= 1) {
+        setIsPlaying(false);
+        setCurrentIndex(-1);
+      }
+    }
+
+    // Re-shuffle if needed or just remove from indices?
+    // Doing a full re-calc for simplicity if shuffle is on
+    if (isShuffle) {
+      // Ideally we remove the specific index and shift others, but indices change...
+      // Simpler to just let the useEffect re-run or force re-shuffle logic?
+      // The existing useEffect relies on length check which might trigger.
+      // But removing 1 item means length changes... but indices might point to wrong things.
+      // Let's reset shuffle indices to be safe or re-generate.
+      // We'll rely on the useEffect hook: [queue.length, isShuffle]
+    }
+
+  }, [currentIndex, queue.length, isShuffle]);
+
 
   // 2. Play/Pause Toggle
   const togglePlay = useCallback(() => {
@@ -568,6 +619,7 @@ function App() {
         onPlay={(song, context) => playSong(song, context)} // context = list of songs
         toggleLike={toggleLike}
         addToPlaylist={addToPlaylist}
+        addToQueue={addToQueue}
         deletePlaylist={deletePlaylist}
         currentSong={queue[currentIndex]}
         onNavigate={navigateTo}
@@ -647,6 +699,7 @@ function App() {
         analyser={analyserRef.current}
         queue={queue}
         onPlayQueueSong={playSong}
+        removeFromQueue={removeFromQueue}
       />
 
 

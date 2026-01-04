@@ -71,13 +71,22 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-/* Utility to hide scrollbar but allow scroll */
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+@layer utilities {
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-default::-webkit-scrollbar {
+        display: block;
+    }
+    .scrollbar-default {
+        -ms-overflow-style: auto;
+        scrollbar-width: auto;
+    }
 }
 
 /* Mobile Keyboard Open / Short Viewport Optimizations */

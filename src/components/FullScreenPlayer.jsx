@@ -32,6 +32,7 @@ const FullScreenPlayer = ({
     audioRef,
     queue,
     onPlayQueueSong, // function to play song from queue
+    removeFromQueue,
     analyser
 }) => {
     const [viewMode, setViewMode] = useState('art'); // 'art', 'lyrics', 'queue'
@@ -170,7 +171,7 @@ const FullScreenPlayer = ({
                         queue={queue}
                         currentIndex={queue.findIndex(s => s.id === currentSong?.id)}
                         onPlay={onPlayQueueSong}
-                        onRemove={null} // TODO: Add remove logic
+                        onRemove={removeFromQueue}
                     />
                 </div>
             </div>
