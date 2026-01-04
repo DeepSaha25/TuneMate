@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { decodeHtml } from '../utils/format';
 
 // Icons
 const ShuffleIcon = ({ active }) => (
@@ -148,10 +149,10 @@ const Playbar = ({
             {/* --- Desktop Layout (>= md) --- */}
             <div className="hidden md:flex items-center justify-between h-full px-8">
                 {/* 1. Song Info (Left) */}
-                <div className="flex items-center gap-4 w-1/3 min-w-[120px]">
+                <div className="flex items-center gap-4 w-1/3 min-w-[120px] max-w-[300px]">
                     {currentSong && (
                         <>
-                            <div className="relative group/cover">
+                            <div className="relative group/cover shrink-0">
                                 <img
                                     src={currentSong.image || 'img/cover.jpg'}
                                     alt=""
@@ -159,9 +160,13 @@ const Playbar = ({
                                 />
                                 <div className="absolute inset-0 bg-black/20 rounded-md opacity-0 group-hover/cover:opacity-100 transition-opacity"></div>
                             </div>
-                            <div className="overflow-hidden">
-                                <div className="text-sm font-bold text-white truncate max-w-[180px] hover:underline cursor-pointer">{currentSong.name}</div>
-                                <div className="text-xs text-gray-400 truncate max-w-[180px] hover:text-gray-300 cursor-pointer">{currentSong.artist}</div>
+                            <div className="overflow-hidden flex flex-col justify-center min-w-0 flex-1">
+                                <div className="text-sm font-bold text-white truncate hover:underline cursor-pointer" title={decodeHtml(currentSong.name)}>
+                                    {decodeHtml(currentSong.name)}
+                                </div>
+                                <div className="text-xs text-gray-400 truncate hover:text-gray-300 cursor-pointer" title={decodeHtml(currentSong.artist)}>
+                                    {decodeHtml(currentSong.artist)}
+                                </div>
                             </div>
                         </>
                     )}
